@@ -6,6 +6,7 @@ using UnityEngine;
 public class Block : MonoBehaviour
 {
     // block is gift , candy , cake
+    
     public int _index;
     public SpriteRenderer _sprite;
     public string _name;

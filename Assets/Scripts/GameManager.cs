@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -26,6 +27,10 @@ public class GameManager : MonoBehaviour
     
     [SerializeField] Transform completeLevel;
     [SerializeField] Transform failLevel;
+
+    [SerializeField] Vector2 direction;
+
+    [SerializeField] Vector2 startPos;
      [SerializeField] private GameState _state;
     void Start(){
         this.LoadLevelSO();
@@ -49,9 +54,55 @@ public class GameManager : MonoBehaviour
     void Update(){
         if(_state == GameState.Win || _state == GameState.Lose) return;
         SetTime();
+        GetTouch();
         GetDirectionInput();
-
+        
     }
+
+    void GetTouch(){
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+
+          
+            if (touch.phase == TouchPhase.Began)
+            {
+                startPos = touch.position;
+            }
+
+            
+            else if (touch.phase == TouchPhase.Ended)
+            {
+                Vector2 touchEnd = touch.position;
+                Vector2 touchDelta = touchEnd - startPos;
+                if (Mathf.Abs(touchDelta.x) > Mathf.Abs(touchDelta.y))
+                {
+                    if (touchDelta.x > 0)
+                    {
+                        Shift(Vector2.right);
+                    }
+                    else
+                    {
+                        Shift(Vector2.left);
+                    }
+                }
+                else
+                {
+                    if (touchDelta.y > 0)
+                    {
+                        Shift(Vector2.up);
+                    }
+                    else
+                    {
+                        Shift(Vector2.down);
+                    }
+                }
+            }
+        }
+
+        
+    }
+
     void SetTime(){
         
         if(_timePlay < 0){
@@ -64,9 +115,9 @@ public class GameManager : MonoBehaviour
     }
     void GetDirectionInput(){
         if(_state != GameState.WatingInput) return;
-        if(Input.GetKeyDown(KeyCode.LeftArrow)) Shift(Vector2.left);
+        if(Input.GetKeyDown(KeyCode.LeftArrow) ) Shift(Vector2.left);
         if(Input.GetKeyDown(KeyCode.RightArrow)) Shift(Vector2.right);
-        if(Input.GetKeyDown(KeyCode.UpArrow)) Shift(Vector2.up);
+        if(Input.GetKeyDown(KeyCode.UpArrow) ) Shift(Vector2.up);
         if(Input.GetKeyDown(KeyCode.DownArrow)) Shift(Vector2.down);
     }
     bool CheckMove(int i){
